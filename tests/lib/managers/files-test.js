@@ -3277,67 +3277,49 @@ describe('Files', function() {
 		var placeholderUrl = '.../{+asset_path}';
 
 		it('should make GET request to get file representation when called', function() {
-			var response = {
-				statusCode: 200,
-				body: {
-					representations: {
-						entries: [
-							{
-								content: {
-									url_template: placeholderUrl
-								}
-							}
-						]
-					}
+			var repInfo = {
+				status: {
+					state: 'success'
+				},
+				content: {
+					url_template: placeholderUrl
 				}
 			};
 			sandbox.mock(boxClientFake).expects('get')
 				.withArgs('/files/1234', expectedRepresentationParam)
-				.returns(Promise.resolve(response));
+				.returns(Promise.resolve(repInfo));
 			files.getRepresentationInfo(FILE_ID, TEST_REPRESENTATION);
 		});
 
 		it('should call callback with the representation when a 200 response is returned', function(done) {
-			var response = {
-				statusCode: 200,
-				body: {
-					representations: {
-						entries: [
-							{
-								content: {
-									url_template: placeholderUrl
-								}
-							}
-						]
-					}
+			var repInfo = {
+				status: {
+					state: 'success'
+				},
+				content: {
+					url_template: placeholderUrl
 				}
 			};
-			sandbox.stub(boxClientFake, 'get').returns(Promise.resolve(response));
+			sandbox.stub(boxClientFake, 'get').returns(Promise.resolve(repInfo));
 			files.getRepresentationInfo(FILE_ID, TEST_REPRESENTATION, function(err, representationObject) {
 				assert.ifError(err);
-				assert.strictEqual(representationObject, response.body.representations, 'representation object is returned');
+				assert.strictEqual(representationObject, repInfo, 'representation object is returned');
 				done();
 			});
 		});
 		it('should return a promise resolving to a representation object when a 200 response is returned', function() {
-			var response = {
-				statusCode: 200,
-				body: {
-					representations: {
-						entries: [
-							{
-								content: {
-									url_template: placeholderUrl
-								}
-							}
-						]
-					}
+			var repInfo = {
+				status: {
+					state: 'success'
+				},
+				content: {
+					url_template: placeholderUrl
 				}
 			};
-			sandbox.stub(boxClientFake, 'get').returns(Promise.resolve(response));
+			sandbox.stub(boxClientFake, 'get').returns(Promise.resolve(repInfo));
 			return files.getRepresentationInfo(FILE_ID, TEST_REPRESENTATION)
 				.then(representationObject => {
-					assert.strictEqual(representationObject, response.body.representations, 'representation object is returned');
+					assert.strictEqual(representationObject, repInfo, 'representation object is returned');
 				});
 		});
 		it('should call callback with an error when a 202 ACCEPTED response is returned', function(done) {
@@ -3486,16 +3468,12 @@ describe('Files', function() {
 				downloadURL = urlTemplate.replace('{+asset_path}', assetPath);
 
 			var repsInfo = {
-				entries: [
-					{
-						status: {
-							state: 'success'
-						},
-						content: {
-							url_template: urlTemplate
-						}
-					}
-				]
+				status: {
+					state: 'success'
+				},
+				content: {
+					url_template: urlTemplate
+				}
 			};
 
 			var stream = new Readable();
